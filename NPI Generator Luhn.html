@@ -6,7 +6,7 @@
     <title>NPI Check Digit Calculator</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Palatino Linotype;
             margin: 0;
             padding: 20px;
             background-color: #f0f8ff; /* Light blue background */
@@ -20,18 +20,28 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            text-align: center;
+            text-align: left;
             color: #007bff; /* Dark blue text color */
         }
         label {
-            font-weight: bold;
+            font-family: Arial, sans-serif;
         }
         input[type="text"] {
             padding: 10px;
             width: calc(100% - 140px);
-            font-size: 16px;
+            font-size: 9px;
             margin-bottom: 10px;
         }
+		h2 {
+		margin-bottom: 20px;
+            text-align: justify;
+			font-size: 12px;
+			font-family: Arial, sans-serif;
+			color: black;
+			line-height:1.5;
+            
+        }
+
         button {
             padding: 10px 20px;
             background-color: #007bff; /* Dark blue button background */
@@ -67,6 +77,9 @@
 <body>
     <div class="container">
         <h1>NPI Check Digit Calculator</h1>
+		<h2>
+		The National Provider Identifier check digit is calculated using the Luhn’s formula for computing the modulus 10 “double-add-double” check digit. This algorithm is recognized as an ISO standard and is the specified check digit algorithm to be used.	
+		</h2>
         <div>
             <label for="inputNumber">Enter a 9 digit number:</label>
             <input type="text" id="inputNumber" maxlength="9" oninput="validateInput(this)">
@@ -76,6 +89,7 @@
         <div id="steps">
             <!-- Steps will be displayed here -->
         </div>
+		
     </div>
 
     <script>
@@ -95,7 +109,7 @@
             }
             var steps = document.getElementById('steps');
             steps.innerHTML = ''; // Clear previous steps
-
+			appendStep("Step 1: Enter the input 9 digit Number", inputNumber);
             // Step 2: Double the value of alternate digits
             var doubledDigits = '';
             for (var i = inputNumber.length - 1; i >= 0; i--) {
