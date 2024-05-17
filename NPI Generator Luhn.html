@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPI Check Digit Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff; /* Light blue background */
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff; /* Dark blue text color */
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 140px);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff; /* Dark blue button background */
+            color: #fff; /* White button text color */
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3; /* Dark blue hover color */
+        }
+        #steps {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+        p {
+            margin: 5px 0;
+            color: #333; /* Dark grey text color for steps */
+        }
+        .error-message {
+            color: red; /* Red error message color */
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .final-output {
+            color: green; /* Green final output color */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NPI Check Digit Calculator</h1>
+        <div>
+            <label for="inputNumber">Enter a 9 digit number:</label>
+            <input type="text" id="inputNumber" maxlength="9" oninput="validateInput(this)">
+            <button onclick="calculateNPI()">Calculate NPI</button>
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+        <div id="steps">
+            <!-- Steps will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        function validateInput(input) {
+            // Allow only numeric input
+            input.value = input.value.replace(/\D/g, '');
+
+            // Clear error message
+            document.getElementById('errorMessage').textContent = '';
+        }
+
+        function calculateNPI() {
+            var inputNumber = document.getElementById('inputNumber').value;
+            if (inputNumber.length !== 9) {
+                document.getElementById('errorMessage').textContent = 'Please enter exactly 9 digits.';
+                return;
+            }
+            var steps = document.getElementById('steps');
+            steps.innerHTML = ''; // Clear previous steps
+
+            // Step 2: Double the value of alternate digits
+            var doubledDigits = '';
+            for (var i = inputNumber.length - 1; i >= 0; i--) {
+                var digit = parseInt(inputNumber.charAt(i));
+                if (i % 2 === 0) {
+                    digit *= 2;
+                }
+                doubledDigits = digit + doubledDigits; // Prepend to maintain order
+            }
+            appendStep("Step 2: Double the value of alternate digits", doubledDigits);
+
+            // Step 3: Sum the individual digits of the products and unaffected digits
+            var sum = 0;
+            for (var j = 0; j < doubledDigits.length; j++) {
+                sum += parseInt(doubledDigits.charAt(j));
+            }
+            appendStep("Step 3: Sum of individual digits", sum);
+
+            // Step 4: Add 24
+            var result = sum + 24;
+            appendStep("Step 4: Add 24", result);
+
+            // Step 5: Subtract from next higher number ending in zero
+            var nextHigherMultiple = Math.ceil(result / 10) * 10;
+            var checkDigit = nextHigherMultiple - result;
+            appendStep("Step 5: Subtract from next higher number ending in zero", checkDigit);
+
+            // Display final NPI
+            var finalNPI = inputNumber + checkDigit;
+            appendStep("Final NPI with check digit", finalNPI, true);
+        }
+
+        function appendStep(stepDescription, stepResult, isFinalOutput = false) {
+            var steps = document.getElementById('steps');
+            var stepElement = document.createElement('p');
+            stepElement.textContent = stepDescription + ": " + stepResult;
+            if (isFinalOutput) {
+                stepElement.classList.add('final-output');
+            }
+            steps.appendChild(stepElement);
+        }
+    </script>
+</body>
+</html>
